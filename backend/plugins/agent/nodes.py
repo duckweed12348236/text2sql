@@ -84,7 +84,6 @@ async def extract_keywords(state: State, runtime: Runtime):
     question = state.messages[-1].content
     keywords = list(set(extract_tags(question, allowPOS=allowed_pos) + [question]))
     writer(Step(step="提取关键词", status=StepStatus.SUCCESS))
-    logger.debug(keywords)
     return Command(goto=recall_columns.key, update={"keywords": keywords})
 
 
