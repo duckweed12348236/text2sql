@@ -1,0 +1,221 @@
+{
+  "tables": [
+    {
+      "name": "table_region",
+      "role": "dim",
+      "description": "地区维度表，用于描述订单发生的地理区域信息，包括国家、省份、大区等层级，支持按地域进行销售数据汇总与分析。",
+      "columns": [
+        {
+          "name": "region_id",
+          "role": "primary_key",
+          "description": "地区唯一标识符，采用字符串编码，用于唯一表示一条地区记录，作为主键被订单表引用。",
+          "alias": ["地区ID", "区域ID", "地区编号", "区域编号", "地域ID"],
+          "sync": false
+        },
+        {
+          "name": "province",
+          "role": "dimension",
+          "description": "订单所属的省份或直辖市名称，如“广东省”、“北京市”，用于省级维度的销售分析。",
+          "alias": ["省份", "省", "所在省份", "省/直辖市", "行政区省份"],
+          "sync": true
+        },
+        {
+          "name": "region_name",
+          "role": "dimension",
+          "description": "订单所属的大区名称，如“华东”、“华南”、“华北”等，用于大区级别的市场划分与业绩考核。",
+          "alias": ["地区", "区域", "大区", "区域名称", "大区名称", "地理分区"],
+          "sync": true
+        },
+        {
+          "name": "country",
+          "role": "dimension",
+          "description": "地区所属国家名称，如“中国”、“美国”，用于跨国业务数据统计。",
+          "alias": ["国家", "国家名称", "所属国家", "国别"],
+          "sync": true
+        }
+      ]
+    },
+    {
+      "name": "table_customer",
+      "role": "dim",
+      "description": "客户维度表，记录下单客户的基本属性信息，包括客户名称、性别、会员等级等，用于客户画像与分层分析。",
+      "columns": [
+        {
+          "name": "customer_id",
+          "role": "primary_key",
+          "description": "客户唯一标识符，系统自动生成或业务编码，作为主键被订单表引用，用于关联客户与订单。",
+          "alias": ["客户ID", "用户ID", "客户编号", "会员ID", "账号ID"],
+          "sync": false
+        },
+        {
+          "name": "customer_name",
+          "role": "dimension",
+          "description": "客户姓名或昵称，用于标识客户身份，支持模糊搜索与客户信息展示。",
+          "alias": ["客户名称", "用户名称", "姓名", "客户姓名", "昵称", "会员名称"],
+          "sync": true
+        },
+        {
+          "name": "gender",
+          "role": "dimension",
+          "description": "客户性别，取值范围通常为“男”、“女”、“未知”，用于性别维度的消费行为分析。",
+          "alias": ["性别", "客户性别", "用户性别", "男女"],
+          "sync": true
+        },
+        {
+          "name": "member_level",
+          "role": "dimension",
+          "description": "客户会员等级，如“普通会员”、“黄金会员”、“钻石会员”等，用于会员权益与分层运营分析。",
+          "alias": ["会员等级", "用户等级", "会员级别", "等级", "VIP等级"],
+          "sync": true
+        }
+      ]
+    },
+    {
+      "name": "table_product",
+      "role": "dim",
+      "description": "商品维度表，存储商品的基础属性信息，包括商品名称、所属品类、品牌等，用于商品维度的销售分析与库存管理。",
+      "columns": [
+        {
+          "name": "product_id",
+          "role": "primary_key",
+          "description": "商品唯一标识符，业务主键，用于唯一标识一个商品SKU或SPU，被订单表作为外键引用。",
+          "alias": ["商品ID", "产品ID", "商品编号", "货号", "SKU", "SPU"],
+          "sync": false
+        },
+        {
+          "name": "product_name",
+          "role": "dimension",
+          "description": "商品名称，用户友好的商品标题或描述，用于商品识别与前端展示。",
+          "alias": ["商品名称", "产品名称", "品名", "商品标题", "产品标题"],
+          "sync": true
+        },
+        {
+          "name": "category",
+          "role": "dimension",
+          "description": "商品所属品类，如“手机”、“笔记本电脑”、“女装”等，用于品类维度的销售趋势与占比分析。",
+          "alias": ["商品类别", "品类", "分类", "类目", "产品分类", "业务品类"],
+          "sync": true
+        },
+        {
+          "name": "brand",
+          "role": "dimension",
+          "description": "商品品牌名称，如“苹果”、“华为”、“耐克”等，用于品牌维度的市场表现与竞争分析。",
+          "alias": ["品牌", "品牌名称", "所属品牌", "商标"],
+          "sync": true
+        }
+      ]
+    },
+    {
+      "name": "table_date",
+      "role": "dim",
+      "description": "时间维度表，用于支持按年、季度、月、日等多粒度的时间序列分析，采用整数日期ID作为主键，便于分区与索引优化。",
+      "columns": [
+        {
+          "name": "date_id",
+          "role": "primary_key",
+          "description": "日期唯一标识，采用yyyyMMdd格式的整数，如20250101代表2025年1月1日，作为主键被订单表引用。",
+          "alias": ["日期ID", "日期", "日期编号", "日ID", "时间ID"],
+          "sync": false
+        },
+        {
+          "name": "year",
+          "role": "dimension",
+          "description": "年份数值，用于年度同比、环比分析，如2024、2025。",
+          "alias": ["年", "年份", "年度", "年份数"],
+          "sync": false
+        },
+        {
+          "name": "quarter",
+          "role": "dimension",
+          "description": "季度标识，取值为“Q1”、“Q2”、“Q3”、“Q4”，用于季度级别的业务复盘与目标追踪。",
+          "alias": ["季度", "季", "季度编号", "Q1", "Q2", "Q3", "Q4"],
+          "sync": true
+        },
+        {
+          "name": "month",
+          "role": "dimension",
+          "description": "月份数值，取值范围1~12，用于月度趋势分析、月度KPI考核。",
+          "alias": ["月", "月份", "月份数", "月度"],
+          "sync": false
+        },
+        {
+          "name": "day",
+          "role": "dimension",
+          "description": "日期数值，取值范围1~31，表示当月的第几天，用于日粒度销售波动分析。",
+          "alias": ["日", "天", "日号", "日期数", "日粒度"],
+          "sync": false
+        }
+      ]
+    },
+    {
+      "name": "table_order",
+      "role": "fact",
+      "description": "订单事实表，记录每一笔订单的详细交易信息，包括关联的客户、商品、时间、地区以及订单数量和金额，是整个业务分析的核心数据源。",
+      "columns": [
+        {
+          "name": "order_id",
+          "role": "primary_key",
+          "description": "订单唯一标识符，业务主键，通常采用全局唯一字符串，用于唯一标识一笔订单。",
+          "alias": ["订单ID", "订单号", "订单编号", "交易号", "单号"],
+          "sync": false
+        },
+        {
+          "name": "customer_id",
+          "role": "foreign_key",
+          "description": "客户维度外键，关联table_customer表的customer_id，用于分析客户维度的订单行为。",
+          "alias": ["客户ID", "用户ID", "客户编号", "买家ID", "下单用户ID"],
+          "sync": false
+        },
+        {
+          "name": "product_id",
+          "role": "foreign_key",
+          "description": "商品维度外键，关联table_product表的product_id，用于分析商品维度的销售情况。",
+          "alias": ["商品ID", "产品ID", "商品编号", "SKU", "货品ID"],
+          "sync": false
+        },
+        {
+          "name": "date_id",
+          "role": "foreign_key",
+          "description": "时间维度外键，关联table_date表的date_id，用于按时间维度分析订单趋势。",
+          "alias": ["日期", "下单日期", "订单日期", "交易日期", "时间ID"],
+          "sync": false
+        },
+        {
+          "name": "region_id",
+          "role": "foreign_key",
+          "description": "地区维度外键，关联table_region表的region_id，用于按地区维度分析销售分布。",
+          "alias": ["地区ID", "区域ID", "地区编号", "地域ID", "区域编号"],
+          "sync": false
+        },
+        {
+          "name": "order_quantity",
+          "role": "measure",
+          "description": "订单中商品的购买数量，表示该笔订单内该商品的总件数，为整型数值，用于计算销量、库存消耗等指标。",
+          "alias": ["销量", "购买数量", "件数", "订购数量", "订单件数", "数量"],
+          "sync": false
+        },
+        {
+          "name": "order_amount",
+          "role": "measure",
+          "description": "订单金额，表示该笔订单的总成交额（通常为实付金额），浮点数类型，用于计算GMV、AOV、收入等核心指标。",
+          "alias": ["销售额", "订单金额", "收入", "成交额", "实付金额", "GMV基数"],
+          "sync": false
+        }
+      ]
+    }
+  ],
+  "metrics": [
+    {
+      "name": "GMV",
+      "description": "全称 Gross Merchandise Value（商品交易总额），表示统计周期内所有已完成订单的成交金额总和，是衡量电商平台整体销售规模的核心指标。计算公式为 SUM(order_amount)。",
+      "relevant_columns": ["table_order.order_amount"],
+      "alias": ["成交总额", "订单总额", "商品交易总额", "总销售额", "总GMV", "流水总额"]
+    },
+    {
+      "name": "AOV",
+      "description": "全称 Average Order Value（平均订单价值），表示统计周期内每笔订单的平均成交金额，反映了用户的消费能力和订单质量。计算公式为 SUM(order_amount) / COUNT(order_id)。",
+      "relevant_columns": ["table_order.order_amount", "table_order.order_id"],
+      "alias": ["平均单价", "平均订单金额", "客单价", "订单均价", "每单均价", "AOV"]
+    }
+  ]
+}
